@@ -1143,25 +1143,17 @@ async function init(packageJson, queries, options) {
       },
       async (ffmpeg, {track, meta, files}) => {
         let infile = xpath.basename(files.audio.file.path);
-        let outfile = xpath.basename(files.audio.file.path.replace(/\.x4a$/, '.m4a'));
+        let outfile = xpath.basename(files.audio.file.path.replace(/\.x4a$/, '.mp4'));
         try {
           ffmpeg.FS('writeFile', infile, await fetchFile(files.audio.file.path));
           await ffmpeg.run(
             '-i',
             infile,
             '-acodec',
-            'aac',
-            '-b:a',
-            options.bitrate,
-            '-ar',
-            '44100',
+            'copy',
             '-vn',
             '-t',
             TimeFormat.fromMs(track.duration, 'hh:mm:ss.sss'),
-            '-f',
-            'ipod',
-            '-aac_pns',
-            '0',
             outfile,
           );
           await fs.writeFile(meta.outFile.handle, ffmpeg.FS('readFile', outfile));
@@ -1348,7 +1340,7 @@ async function init(packageJson, queries, options) {
       );
       const outFileName = `${filenamify(trackBaseName, {
         replacement: '_',
-      })}.m4a`;
+      })}.mp4`;
       const trackPath = xpath.join(
         ...(options.tree ? [track.album_artist, track.album].map(name => filenamify(name, {replacement: '_'})) : []),
       );
