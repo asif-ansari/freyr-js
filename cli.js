@@ -1438,8 +1438,15 @@ async function init(packageJson, queries, options) {
     if (artist.followers) logger.log(`\u27a4 Followers: ${`${artist.followers}`.replace(/(\d)(?=(\d{3})+$)/g, '$1,')}`);
     if (artist.genres && artist.genres.length) logger.log(`\u27a4 Genres: ${artist.genres.join(', ')}`);
     const albumsStack = await processPromise(service.getArtistAlbums(artist.uri, options.storefront), logger, {
-      onInit: '> Gathering collections...',
+      onInit: '\u27a4 Gathering collections...',
     });
+    logger.log(`\u27a4 No of albums: ${albumsStack.length}`);
+    var total = 0;
+    for (var index = 0; index < albumsStack.length; index++)
+    {
+        total += albumsStack[index]['ntracks'];
+    }
+    logger.log(`\u27a4 No of songs: ${total}`);
     if (!albumsStack) return;
     const collationLogger = queryLogger.log(`[\u2022] Collating...`).tick();
     return Promise.mapSeries(albumsStack, async ({uri}, index) => {
